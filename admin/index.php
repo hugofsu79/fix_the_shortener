@@ -5,21 +5,39 @@ require '../config.php';
 session_start();
 
 // demande de logout
-
 if (isset($_GET['logout'])) {
 	session_destroy();
 	unset($_SESSION);
 }
 
 // tentative de login
-
 if (isset($_POST['username']) && isset($_POST['password'])) {
 
 	$login = $_POST['username'];
-	$hashedPassword = md5($_POST['password']);
 
-	$sql = "select * from users where login = '$login' and password = '$hashedPassword'";
-	$query = $database->query($sql, PDO::FETCH_ASSOC);
+	// mot de passe : version de base (chiffrage md5, insuffisant)
+	// $hashedPassword = md5($_POST['password']);
+
+	// mot de passe : version sécurisée (hâchage)
+	$hashedPassword = password_hash($_POST['password'], PASSWORD_DEFAULT);
+
+	//version de base
+	// $sql = "select * from users where login = '$login' and password = '$hashedPassword'";
+	// $query = $database->query($sql, PDO::FETCH_ASSOC);
+
+	// version avec bindparam : entraîne une "login error" en cas d'injection sql
+	// $query = $database->prepare("SELECT login, password FROM users WHERE login = :login AND password = :password");
+	// $query->bindParam(':login', $login, PDO::PARAM_STR);
+	// $query->bindParam(':password', $hashedPassword, PDO::PARAM_STR);
+	// $query->execute();
+
+	// version avec requête préparée : idem
+	$query = $database->prepare("SELECT login, password FROM users WHERE login = :login AND password = :password");
+	$query->execute(array(
+		"login" => $login,
+		"password" => $hashedPassword
+	));
+
 	$users = $query->fetchAll();
 
 	if (isset($users[0])) {
@@ -35,7 +53,6 @@ if (isset($_POST['username']) && isset($_POST['password'])) {
 <head>
 	<link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,200&display=swap" rel="stylesheet">
 	<style>
-		
 		* {
 			margin: 0;
 			padding: 0;
