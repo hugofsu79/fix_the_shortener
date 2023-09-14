@@ -11,12 +11,6 @@ $query->execute([
 	':target' => $_GET['target'],
 ]);
 
-$query = $database->prepare('INSERT INTO urls (code, target) VALUES (:code, :target)');
-$query->execute([
-	':code' => $code,
-	':target' => $filteredUrl,
-]);
-
 // On retourne une url constituée de l'adresse de base + le code généré
 // en cliquant sur celle-ci, on peut accéder au site
 
