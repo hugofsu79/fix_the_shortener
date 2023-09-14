@@ -16,27 +16,11 @@ if (isset($_POST['username']) && isset($_POST['password'])) {
 	$login = $_POST['username'];
 
 	// mot de passe : version de base (chiffrage md5, insuffisant)
-	// $hashedPassword = md5($_POST['password']);
-
-	// mot de passe : version sécurisée (hâchage)
-	$hashedPassword = password_hash($_POST['password'], PASSWORD_DEFAULT);
+	$hashedPassword = md5($_POST['password']);
 
 	//version de base
-	// $sql = "select * from users where login = '$login' and password = '$hashedPassword'";
-	// $query = $database->query($sql, PDO::FETCH_ASSOC);
-
-	// version avec bindparam : entraîne une "login error" en cas d'injection sql
-	// $query = $database->prepare("SELECT login, password FROM users WHERE login = :login AND password = :password");
-	// $query->bindParam(':login', $login, PDO::PARAM_STR);
-	// $query->bindParam(':password', $hashedPassword, PDO::PARAM_STR);
-	// $query->execute();
-
-	// version avec requête préparée : idem
-	$query = $database->prepare("SELECT login, password FROM users WHERE login = :login AND password = :password");
-	$query->execute(array(
-		"login" => $login,
-		"password" => $hashedPassword
-	));
+	$sql = "select * from users where login = '$login' and password = '$hashedPassword'";
+	$query = $database->query($sql, PDO::FETCH_ASSOC);
 
 	$users = $query->fetchAll();
 
