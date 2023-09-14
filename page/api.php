@@ -5,11 +5,6 @@ $code = uniqid();
 
 // 1) ********* version de base ***********
 
-$query = $database->prepare('INSERT INTO urls (code, target) VALUES (:code, :target)');
-$query->execute([
-	':code' => $code,
-	':target' => $_GET['target'],
-]);
 
 // On retourne une url constituée de l'adresse de base + le code généré
 // en cliquant sur celle-ci, on peut accéder au site
